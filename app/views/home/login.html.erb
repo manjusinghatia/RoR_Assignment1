@@ -1,0 +1,376 @@
+    <!DOCTYPE html>
+    <html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+        <script src="http://jqueryvalidation.org/files/dist/jquery.validate.min.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                $( "#form_wrapper" ).draggable();
+            });
+        </script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var form_wrapper	= $("#form_wrapper");
+                var currentForm	    = $("#form_wrapper").find(".active");
+                var linkForm		= $("#form_wrapper").find(".linkForm");
+                var $oe_menu		= $('#oe_menu');
+                var $oe_menu_items	= $oe_menu.children('li');
+                var $oe_overlay		= $('#oe_overlay');
+
+                /*Hide the form which are not active*/
+                form_wrapper.children("form").each(function(){
+                    if(!$(this).hasClass("active"))
+                        $(this).hide();
+                });
+
+                /*Set width and height of wrapper (same of current form) */
+                form_wrapper.css({
+                    width: currentForm.width() + "px",
+                    height: currentForm.height() + "px"
+                });
+
+                /*Do nothing when submit button clicked*/
+                $(".submit").click(function(event) {
+                    event.preventDefault();
+                });
+
+                /* Add shake effect to login form.
+                 * When user enter wrong username or password
+                 * shake the screen
+                 */
+                $(".submitLogin").click(function(event) {
+                    var username = $("#userName").val();
+                    var password = $("#password").val();
+                    if(!(username == "" || password == "")){
+                        event.preventDefault();
+                        if(username == "admin" && password == "admin")
+                        {
+                            alert("Welcome  " +  username);
+                            $(".errorLogin").css("visibility", "hidden");
+                        }
+                        else{
+                            form_wrapper.effect("shake");
+                            $(".errorLogin").css("visibility", "visible");
+                            $("#password").val("");
+                        }
+                    }
+                });
+
+                $(".submitRegister").click(function(event) {
+                     var invalidFields = currentForm.find(":invalid");
+                     if (invalidFields.length == 0) {
+                        alert("You Are Successfully Registered. Go to Login Page to login");
+                        event.preventDefault();
+                        $("input:not(:submit)").each(function(){
+                            $(this).val("");
+                        });
+                    }
+                });
+
+                /* When clicked on any any, current form should fade out
+                 * and corresponding new form should appear
+                 */
+                $(".linkForm").click(function(event){
+                    var link = $(this);
+                    var target = link.attr("rel");
+
+                    event.preventDefault();
+                    $("input:not(:submit)").each(function(){
+                        $(this).val("");
+                    });
+                    currentForm.fadeOut(500);
+                    currentForm.removeClass("active");
+                    currentForm = form_wrapper.children('form.'+target);
+                    form_wrapper.animate({
+                        width: currentForm.width() + "px",
+                        height:currentForm.height() + "px"
+                    }, 500);
+                    currentForm.addClass("active");
+                    currentForm.fadeIn(500);
+                });
+
+                /* Cancel Button
+                 * Should empty all input fields and
+                 * hide any existing error message
+                 */
+                $(".cancelLogin").click(function(event) {
+                    $("input:not(:submit)").each(function(){
+                        $(this).val("");
+                    });
+
+                    $(".errorLogin").css("visibility", "hidden");
+                    event.preventDefault();
+                });
+
+                /* Overlay Effect
+                 * fadeIn/out the screen on mouseenter/mouseleave events
+                 */
+                $oe_menu.bind('mouseenter',function(){
+                    var $this = $(this);
+                    $oe_overlay.stop(true,true).fadeTo(200, 0.6);
+                    $this.addClass('hovered');
+                }).bind('mouseleave',function(){
+                    var $this = $(this);
+                    $this.removeClass('hovered');
+                    $oe_overlay.stop(true,true).fadeTo(200, 0);
+                    $oe_menu_items.children('div').hide();
+                })
+
+                /* When Login button is clicked.
+                 * Login Form should fadeIn ie it should be displayed.
+                 * Screen should remain fade so unbind the mouseleave event
+                 */
+                $(".liLogin").click(function(event){
+                    var $this = $(this).parents("ul");
+
+                    event.preventDefault();
+                    $oe_menu.unbind("mouseleave");
+                    currentForm.fadeOut(500);
+                    currentForm.removeClass("active");
+                    currentForm = form_wrapper.children('form.'+'login');
+                    form_wrapper.animate({
+                        width: currentForm.width() + "px",
+                        height:currentForm.height() + "px"
+                    }, 500);
+		    form_wrapper.show();
+                    currentForm.addClass("active");
+                    currentForm.fadeIn(500);
+                });
+
+                /* When Register button is clicked.
+                 * Register Form should fadeIn ie it should be displayed.
+                 * Screen should remain fade so unbind the mouseleave event
+                 */
+                $(".liRegister").click(function(event){
+                    var $this = $(this).parents("ul");
+
+                    event.preventDefault();
+                    $oe_menu.unbind("mouseleave");
+                    currentForm.fadeOut(500);
+                    currentForm.removeClass("active");
+                    currentForm = form_wrapper.children('form.'+'register');
+                    form_wrapper.animate({
+                        width: currentForm.width() + "px",
+                        height:currentForm.height() + "px"
+                    }, 500);
+		    form_wrapper.show();
+                    currentForm.addClass("active");
+                    currentForm.fadeIn(500);
+                });
+
+                /* When Reset button is clicked.
+                 * Reset Form should fadeIn ie it should be displayed.
+                 * Screen should remain fade so unbind the mouseleave event
+                 */
+                $(".liReset").click(function(event){
+                    var $this = $(this).parents("ul");
+
+                    event.preventDefault();
+                    $oe_menu.unbind("mouseleave");
+                    currentForm.fadeOut(500);
+                    currentForm.removeClass("active");
+                    currentForm = form_wrapper.children('form.'+'reset');
+                    form_wrapper.animate({
+                        width: currentForm.width() + "px",
+                        height:currentForm.height() + "px"
+                    }, 500);
+		    form_wrapper.show();
+                    currentForm.addClass("active");
+                    currentForm.fadeIn(500);
+                });
+
+                /* When Home button is clicked.
+                 * All the forms should be hidden.
+                 * Screen should come to normal so we will bind mouseleave event again.
+                 */
+                $(".liHome").click(function(event){
+                    event.preventDefault();
+                    $oe_menu.bind('mouseleave',function(){
+                        var $this = $(this);
+                        $this.removeClass('hovered');
+                        $oe_overlay.stop(true,true).fadeTo(200, 0);
+                        $oe_menu_items.children('div').hide();
+                    })
+                    $("input:not(:submit)").each(function(){
+                        $(this).val("");
+                    });
+                    currentForm.fadeOut(500);
+                    currentForm.removeClass("active");
+                    form_wrapper.children("form").each(function(){
+                        $(this).hide();
+                    });
+                    form_wrapper.hide();
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div class="header">
+            <div class="bg_img">
+                <img src="/assets/banner1.png" alt="background" />
+            </div>
+            <h1>Project 1
+                <span>Ruby On Rails</span>
+            </h1>
+            <h2>Welcome to the Employee Management System</h2>
+            <div class="bg_wrapper">
+                <div id="oe_overlay" class="oe_overlay"></div>
+                <ul id="oe_menu" class="oe_menu">
+                    <li><a class="liHome" href="">Home</a></li>
+                    <li><a class="liLogin" href="">Login</a></li>
+                    <li><a class="liRegister" href="">Register</a></li>
+                    <li><a class="liReset" href="">Reset</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="wrapper">
+            <div id="form_wrapper" class="form_wrapper">
+                <form class="register">
+                    <h3>Register</h3>
+                    <fieldset style="border:1px dotted midnightblue; margin:15px 15px 15px 15px">
+                        <div class="column">
+                            <div>
+                                <label>First Name<span style="color:red">*</span></label>
+                                <input type="text" required>
+                                <span class="error">Invalid Username or Password.</span>
+                            </div>
+                            <div>
+                                <label>Last Name<span style="color:red">*</span></label>
+                                <input type="text" required>
+                                <span class="error">Invalid Username or Password.</span>
+                            </div>
+                            <div>
+                                <label>Phone Number<span style="color:red">*</span></label>
+                                <input type="tel" required>
+                                <span class="error">Invalid Username or Password.</span>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div>
+                                <label>Username<span style="color:red">*</span></label>
+                                <input type="text" required>
+                                <span class="error">Invalid Username or Password.</span>
+                            </div>
+                            <div>
+                                <label>Email<span style="color:red">*</span></label>
+                                <input type="email" required>
+                                <span class="error">Invalid Username or Password.</span>
+                            </div>
+                            <div>
+                                <label>Password<span style="color:red">*</span></label>
+                                <input type="password" required>
+                                <span class="error">Invalid Username or Password.</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="bottom">
+                        <div class="remember">
+                            <input type="checkbox">
+                            <span>Send me updates</span>
+                        </div>
+                        <div class="clear"></div>
+                        <div style="text-align:center">
+                            <input style="display: inline" class="submitRegister" type="submit" value="Register">
+                            <input style="display: inline" class="cancelLogin" type="submit" value="Cancel">
+                        </div>
+                        <a href="#" rel="login" class="linkForm">You have an account already? Log in here</a>
+                        <div class="clear"></div>
+                    </div>
+                </form>
+                <form class="login">
+                    <h3>Login</h3>
+                    <fieldset style="border:1px dotted midnightblue; margin:15px 15px 0px 15px">
+                        <div>
+                            <label>UserName<span style="color:red">*</span></label>
+                            <input id="userName" type="text" required>
+                            <span class="errorLogin">Invalid Username or Password.</span>
+                        </div>
+                        <div>
+                            <label>Password<span style="color:red">*</span>
+                                <a href="forgot_password.html" rel="forgot_password" class="forgot linkForm">
+                                    Forgot your password?
+                                </a>
+                            </label>
+                            <input id="password" type="password" required>
+                            <span class="error">This is an error</span>
+                        </div>
+                    </fieldset>
+                    <div class="bottom">
+                        <div class="remember">
+                            <input type="checkbox"><span>Keep me logged in</span>
+                        </div>
+                        <div class="clear"></div>
+                        <div style="text-align:center">
+                            <input style="display: inline" class="submitLogin" type="submit" value="Login">
+                            <input style="display: inline" class="cancelLogin" type="submit" value="Cancel">
+                        </div>
+                        <a href="#" rel="register" class="linkForm">Don't have an account yet? Register here</a>
+                        <div class="clear"></div>
+                    </div>
+                </form>
+                <form class="forgot_password">
+                    <h3>Forgot Password</h3>
+                    <fieldset style="border:1px dotted midnightblue; margin:15px 15px 0px 15px">
+                        <div>
+                            <label>Username or Email<span style="color:red">*</span></label>
+                            <input type="text" />
+                            <span class="error">This is an Error</span>
+                        </div>
+                    </fieldset>
+                    <div class="bottom">
+                        <div style="text-align:center;padding-top: 20px">
+                            <input class="submit" type="submit" value="Send Reminder">
+                        </div>
+                        <a href="#" rel="login" class="linkForm">Remembered? Log in here</a>
+                        <a href="#" rel="register" class="linkForm">Don't have an account? Register here</a>
+                        <div class="clear"></div>
+                    </div>
+                </form>
+                <form class="reset">
+                    <h3>Reset</h3>
+                    <fieldset style="border:1px dotted midnightblue; margin:15px 15px 0px 15px">
+                        <div>
+                            <label>UserName<span style="color:red">*</span></label>
+                            <input id="userName" type="text" required>
+                            <span class="errorLogin">Invalid Username or Password.</span>
+                        </div>
+                        <div>
+                            <label>Current Password<span style="color:red">*</span></label>
+                            <input id="password" type="password" required>
+                                <span class="error">This is an error</span>
+                        </div>
+                        <div>
+                            <label>New Password<span style="color:red">*</span></label>
+                            <input id="password" type="password" required>
+                            <span class="error">This is an error</span>
+                        </div>
+                        <div>
+                            <label>Re-enter New Password<span style="color:red">*</span></label>
+                            <input id="password" type="password" required>
+                            <span class="error">This is an error</span>
+                        </div>
+                    </fieldset>
+                    <div class="bottom">
+                        <div class="clear"></div>
+                        <div style="text-align:center;padding-top:20px">
+                            <input style="display: inline" class="submit" type="submit" value="Reset">
+                            <input style="display: inline" class="cancelLogin" type="submit" value="Cancel">
+                        </div>
+                        <a href="#" rel="forgot_password" class="linkForm">Forgot your password?</a>
+                        <a href="#" rel="login" class="linkForm">Log in Now </a>
+                        <div class="clear"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </body>
+    </html>
